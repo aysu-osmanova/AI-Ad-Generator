@@ -10,6 +10,7 @@
 body{margin:0;background:var(--bg);color:var(--accent);padding:24px}
 .container{max-width:1100px;margin:0 auto}
 h1{margin:0 0 16px;font-family:Poppins, Inter, system-ui, sans-serif}
+ .subheading{margin:6px 0 22px;color:var(--muted);font-size:15px}
 
 /* Layout: two-column on wide screens */
 .panel-grid{display:flex;flex-direction:column;gap:20px}
@@ -35,6 +36,10 @@ button{padding:10px 14px;background:var(--mint);border:none;color:white;border-r
 
 .card{background:var(--card);padding:14px;border-radius:8px;box-shadow:0 6px 18px rgba(2,6,23,0.06);margin-bottom:12px}
 .card-header{display:flex;align-items:center;justify-content:space-between}
+.card{border-top:6px solid transparent}
+.platform-instagram{border-image:linear-gradient(90deg,#f58529,#dd2a7b,#515bd4) 1}
+.platform-facebook{border-image:linear-gradient(90deg,#1877f2,#145dbf) 1}
+.platform-tiktok{border-image:linear-gradient(90deg,#69C9D0,#ee1d52) 1}
 .card-header h2{margin:0;font-family:Poppins, Inter, sans-serif}
 .copy-btn{background:transparent;border:none;cursor:pointer;font-size:16px;padding:6px;border-radius:6px}
 .copy-btn:hover{background:rgba(15,23,42,0.04)}
@@ -49,7 +54,7 @@ button{padding:10px 14px;background:var(--mint);border:none;color:white;border-r
 .result-hook{font-size:22px;line-height:1.35;font-weight:800}
 
 /* Animations */
-.fade-in{animation:fadeUp .35s ease both}
+.fade-in{animation:fadeUp .35s cubic-bezier(.2,.9,.3,1) both}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
 /* Dim form when disabled */
@@ -58,4 +63,16 @@ button{padding:10px 14px;background:var(--mint);border:none;color:white;border-r
 /* Button spinner */
 .spinner{display:inline-block;width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);border-top-color:rgba(255,255,255,1);animation:spin .8s linear infinite;margin-right:6px;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* Premium touches */
+.card{border-radius:14px;padding:18px}
+.card:hover{transform:translateY(-6px);box-shadow:0 14px 40px rgba(3,10,31,0.12)}
+.results-panel{background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.45));padding:18px;border-radius:14px}
+.form-panel{background:linear-gradient(180deg,#ffffff, #fbfeff);padding:18px;border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.04)}
+.placeholder{font-size:16px;padding:28px}
+
+/* Input subtle labels and spacing */
+label{font-size:14px;color:var(--muted);display:block}
+input,select,textarea{font-size:15px}
+
 
