@@ -80,9 +80,20 @@ document.getElementById('genForm').addEventListener('submit', async (e) => {
       body: JSON.stringify({ business_name: business, product_service: product, mode })
     });
 
-    const json = await resp.json();
-    if (json.status !== 'success') {
-      alert(json.message || 'Generation failed');
+    // Safely parse JSON. Some error responses may be empty or plain text.
+    const text = await resp.text();
+    let json = null;
+    try {
+      json = text ? JSON.parse(text) : null;
+    } catch (parseErr) {
+      console.error('Failed to parse JSON response from /api/generate:', parseErr, 'raw:', text);
+      alert('Server returned an invalid response. See console for details.');
+      return;
+    }
+
+    if (!json || json.status !== 'success') {
+      const msg = (json && json.message) || `Generation failed (status ${resp.status})`;
+      alert(msg);
       return;
     }
 

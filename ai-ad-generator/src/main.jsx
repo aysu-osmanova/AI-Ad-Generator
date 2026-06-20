@@ -6,6 +6,7 @@ import {
   ChevronDown,
   Clipboard,
   Copy,
+  Eye,
   Loader2,
   Send,
   Sparkles,
@@ -189,8 +190,8 @@ function GeneratorPanel({ form, setForm, onSubmit, loading, error }) {
             ['5', 'Hashtags'],
             ['2x', 'Modes']
           ].map(([value, label]) => (
-            <div key={label} className="rounded-2xl bg-slate-50 px-2 py-3">
-              <div className="text-lg font-extrabold text-slate-900">{value}</div>
+            <div key={label} className="rounded-2xl bg-gradient-to-br from-mint-50 to-emerald-50/60 px-2 py-3 ring-1 ring-mint-100">
+              <div className="text-lg font-extrabold text-mint-600">{value}</div>
               <div className="mt-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
                 {label}
               </div>
@@ -223,8 +224,8 @@ function CopyButton({ text, label }) {
       className="group/copy relative flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm transition duration-200 hover:border-mint-200 hover:bg-mint-50 hover:text-mint-600"
     >
       {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-      <span className="pointer-events-none absolute right-0 top-12 z-20 whitespace-nowrap rounded-xl bg-slate-950 px-3 py-2 text-xs font-semibold text-white opacity-0 shadow-xl transition group-hover/copy:translate-y-0 group-hover/copy:opacity-100">
-        {copied ? 'Copied' : 'Copy to clipboard'}
+      <span className="pointer-events-none absolute right-0 top-12 z-20 whitespace-nowrap rounded-xl bg-slate-950 px-3 py-2 text-xs font-semibold text-white translate-y-2 opacity-0 shadow-xl transition-all duration-200 group-hover/copy:translate-y-0 group-hover/copy:opacity-100">
+        {copied ? 'Copied!' : 'Copy to clipboard'}
       </span>
     </button>
   );
@@ -247,9 +248,12 @@ function ResultSection({ label, children }) {
   );
 }
 
-function PlatformCard({ platform, icon: Icon, gradient, title, description, children, text }) {
+function PlatformCard({ platform, icon: Icon, gradient, title, description, children, text, index = 0 }) {
   return (
-    <article className="group relative overflow-hidden rounded-[1.75rem] border border-white/90 bg-white p-5 shadow-sm ring-1 ring-slate-900/[0.03] transition duration-300 hover:-translate-y-1 hover:shadow-feather sm:p-6">
+    <article
+      className="group relative overflow-hidden rounded-[1.75rem] border border-white/90 bg-white p-5 shadow-sm ring-1 ring-slate-900/[0.03] transition duration-300 hover:-translate-y-1 hover:shadow-feather animate-fade-in-up sm:p-6"
+      style={{ animationDelay: `${index * 0.1}s` }}
+    >
       <div className={cn('absolute inset-x-0 top-0 h-1', gradient)} />
       <header className="mb-6 flex items-start justify-between gap-4">
         <div className="flex min-w-0 items-center gap-3">
@@ -316,17 +320,25 @@ function ResultsFeed({ results, loading, hasGenerated }) {
   }
 
   return (
-    <div className="space-y-5">
-      <div className="flex flex-col justify-between gap-4 rounded-[1.75rem] border border-white/80 bg-white/70 p-5 shadow-sm ring-1 ring-slate-900/[0.02] sm:flex-row sm:items-center">
+    <div className="space-y-5" key={hasGenerated}>
+      <div className="animate-fade-in-up flex flex-col justify-between gap-4 rounded-[1.75rem] border border-white/80 bg-white/70 p-5 shadow-sm ring-1 ring-slate-900/[0.02] sm:flex-row sm:items-center">
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.18em] text-mint-600">
             {hasGenerated ? 'Generated Output' : 'Live Preview'}
           </p>
           <h2 className="mt-2 text-2xl font-extrabold text-slate-950">Platform-ready ad set</h2>
         </div>
-        <div className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-600 shadow-sm ring-1 ring-slate-200">
-          <Clipboard className="h-4 w-4 text-mint-500" />
-          Copy-ready cards
+        <div className="flex items-center gap-2.5">
+          {!hasGenerated && (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-2 text-xs font-bold text-amber-600 ring-1 ring-amber-200/80">
+              <Eye className="h-3.5 w-3.5" />
+              Sample Preview
+            </span>
+          )}
+          <div className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-600 shadow-sm ring-1 ring-slate-200">
+            <Clipboard className="h-4 w-4 text-mint-500" />
+            Copy-ready cards
+          </div>
         </div>
       </div>
 
@@ -337,6 +349,7 @@ function ResultsFeed({ results, loading, hasGenerated }) {
         title="Caption"
         description="Short, visual, and hashtag-ready."
         text={copyText.instagram}
+        index={0}
       >
         <p className="whitespace-pre-wrap text-[15px] leading-7 text-slate-700">
           {normalizeNewlines(displayResults.instagram.caption)}
@@ -355,6 +368,7 @@ function ResultsFeed({ results, loading, hasGenerated }) {
         title="Ad Copy"
         description="Clear value story with a direct CTA."
         text={copyText.facebook}
+        index={1}
       >
         <p className="whitespace-pre-wrap text-[15px] leading-7 text-slate-700">
           {normalizeNewlines(displayResults.facebook.ad_copy)}
@@ -370,10 +384,11 @@ function ResultsFeed({ results, loading, hasGenerated }) {
       <PlatformCard
         platform="TikTok"
         icon={Zap}
-        gradient="bg-gradient-to-r from-cyan-300 via-slate-900 to-rose-400"
+        gradient="bg-gradient-to-r from-[#25F4EE] to-[#FE2C55]"
         title="Hook"
         description="One-sentence opener for quick attention."
         text={copyText.tiktok}
+        index={2}
       >
         <p className="text-2xl font-extrabold leading-snug text-slate-950">
           {normalizeNewlines(displayResults.tiktok.hook)}
@@ -431,7 +446,13 @@ function App() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
+    <main className="relative min-h-screen bg-slate-50 text-slate-900">
+      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full bg-mint-100/70 blur-[100px]" />
+        <div className="absolute top-[35%] -left-48 h-[400px] w-[400px] rounded-full bg-emerald-100/55 blur-[90px]" />
+        <div className="absolute -bottom-32 right-[25%] h-[300px] w-[300px] rounded-full bg-teal-100/45 blur-[80px]" />
+      </div>
+
       <div className="mx-auto grid min-h-screen w-full max-w-[1480px] gap-6 px-4 py-4 sm:px-6 lg:grid-cols-[minmax(340px,35%)_minmax(0,65%)] lg:px-8 lg:py-6">
         <GeneratorPanel
           form={form}

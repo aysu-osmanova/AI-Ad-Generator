@@ -20,6 +20,15 @@ module.exports = {
       boxShadow: {
         mint: '0 18px 45px rgba(110, 213, 190, 0.35)',
         feather: '0 18px 60px rgba(15, 23, 42, 0.07)'
+      },
+      animation: {
+        'fade-in-up': 'fadeInUp 0.45s ease both'
+      },
+      keyframes: {
+        fadeInUp: {
+          from: { opacity: '0', transform: 'translateY(18px)' },
+          to: { opacity: '1', transform: 'translateY(0)' }
+        }
       }
     }
   },
