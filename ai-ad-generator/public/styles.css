@@ -1,0 +1,61 @@
+:root{
+	--bg:#f7fafc;
+	--card:#ffffff;
+	--accent:#0f172a;
+	--mint:#34d399; /* soft mint */
+	--muted:#64748b;
+}
+
+*{box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial}
+body{margin:0;background:var(--bg);color:var(--accent);padding:24px}
+.container{max-width:1100px;margin:0 auto}
+h1{margin:0 0 16px;font-family:Poppins, Inter, system-ui, sans-serif}
+
+/* Layout: two-column on wide screens */
+.panel-grid{display:flex;flex-direction:column;gap:20px}
+.panel{padding:0}
+.left{flex:1}
+.right{flex:2}
+
+@media(min-width:900px){
+	.panel-grid{flex-direction:row;align-items:flex-start}
+	.form-panel{max-width:420px}
+}
+
+form{display:grid;gap:12px;margin-bottom:18px}
+label{display:block}
+input,select,textarea{width:100%;padding:10px;border:1px solid #e6edf3;border-radius:8px}
+input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 4px rgba(52,211,153,0.12);border-color:var(--mint)}
+
+button{padding:10px 14px;background:var(--mint);border:none;color:white;border-radius:8px;cursor:pointer;font-weight:600}
+.button-loading{opacity:0.9;pointer-events:none}
+
+.results-panel{min-height:220px}
+.placeholder{color:var(--muted);background:linear-gradient(90deg, rgba(255,255,255,0.6), rgba(255,255,255,0.9));padding:20px;border-radius:8px;border:1px dashed #e6edf3}
+
+.card{background:var(--card);padding:14px;border-radius:8px;box-shadow:0 6px 18px rgba(2,6,23,0.06);margin-bottom:12px}
+.card-header{display:flex;align-items:center;justify-content:space-between}
+.card-header h2{margin:0;font-family:Poppins, Inter, sans-serif}
+.copy-btn{background:transparent;border:none;cursor:pointer;font-size:16px;padding:6px;border-radius:6px}
+.copy-btn:hover{background:rgba(15,23,42,0.04)}
+
+.result-content{margin:0}
+.result-block{margin-top:14px}
+.result-block:first-child{margin-top:0}
+.result-label{margin-bottom:6px;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.result-copy{white-space:pre-wrap;line-height:1.5}
+.result-tags{line-height:1.7;color:#0f766e;font-weight:700}
+.result-cta{white-space:pre-wrap;color:#0f766e;font-weight:800}
+.result-hook{font-size:22px;line-height:1.35;font-weight:800}
+
+/* Animations */
+.fade-in{animation:fadeUp .35s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* Dim form when disabled */
+.form-disabled{opacity:0.6;pointer-events:none}
+
+/* Button spinner */
+.spinner{display:inline-block;width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);border-top-color:rgba(255,255,255,1);animation:spin .8s linear infinite;margin-right:6px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+
