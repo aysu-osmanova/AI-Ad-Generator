@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const express = require('express');
 const cors = require('cors');
 
@@ -10,7 +11,10 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../public')));
+
+const distDir = path.join(__dirname, '../dist');
+const publicDir = path.join(__dirname, '../public');
+const clientDir = fs.existsSync(path.join(distDir, 'index.html')) ? distDir : publicDir;
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || null;
 const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || null;
@@ -311,6 +315,16 @@ app.post('/api/generate', async (req, res) => {
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
+});
+
+app.use(express.static(clientDir));
+
+app.get('*', (req, res) => {
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ status: 'error', message: 'API route not found' });
+  }
+
+  return res.sendFile(path.join(clientDir, 'index.html'));
 });
 
 app.listen(PORT, () => {
