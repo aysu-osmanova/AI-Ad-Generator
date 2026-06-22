@@ -74,6 +74,48 @@ The Express server serves both the built frontend and the `/api` routes from a s
 
 ---
 
+## Deploying to Railway
+
+The app ships with a `Dockerfile` and `railway.json`, so the build runs on Linux
+inside Docker — it deploys the same way regardless of whether you develop on
+Windows, macOS, or Linux. The Windows-specific contents of a local
+`node_modules/` are never used; Railway installs fresh from `package-lock.json`.
+
+### Option A — from the Railway dashboard (no CLI)
+
+1. Push this repo to GitHub.
+2. On [railway.com](https://railway.com): **New Project → Deploy from GitHub repo**, pick the repo.
+3. Open the service → **Settings → Root Directory** and set it to **`ai-ad-generator`**
+   (the app lives in a subfolder, not the repo root). Railway will then pick up
+   `railway.json` + `Dockerfile`.
+4. **Variables** tab → add `OPENROUTER_API_KEY = sk-or-...` (the only required one).
+5. Deploy. Under **Settings → Networking**, click **Generate Domain** to get a public URL.
+
+### Option B — Railway CLI
+
+```bash
+npm i -g @railway/cli
+railway login
+cd ai-ad-generator
+railway init                       # create/link a project
+railway variables set OPENROUTER_API_KEY=sk-or-...
+railway up                         # build & deploy from this folder
+```
+
+Railway automatically injects a `PORT` env var; the server already binds
+`0.0.0.0:$PORT`, and `/api/health` is configured as the health check. Prompts
+and model have sensible built-in defaults, so **only `OPENROUTER_API_KEY` is
+required**. Override `OPENROUTER_MODEL`, `PROMPT_*`, `LLM_TEMPERATURE`, etc. by
+adding more Railway variables if desired.
+
+> Build/verify the image locally before deploying:
+> ```bash
+> docker build -t ai-ad-generator .
+> docker run --rm -p 8080:3000 -e OPENROUTER_API_KEY=sk-or-... ai-ad-generator
+> ```
+
+---
+
 ## Project structure
 
 ```

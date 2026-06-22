@@ -19,6 +19,16 @@ const clientDir = fs.existsSync(path.join(distDir, 'index.html')) ? distDir : pu
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || null;
 const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || null;
 const OPENROUTER_BASE_URL = process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1';
+
+// Built-in prompt defaults so the app works out-of-the-box on a fresh deploy
+// (e.g. Fly.io) when only OPENROUTER_API_KEY is configured. Any of these can
+// still be overridden via the matching environment variable / .env entry.
+const DEFAULT_PROMPTS = {
+  express: 'You are an expert Multi-Platform AI Copywriter. Your task is to generate ad copy for three different platforms based on the User\'s Business Name and Product/Service.\n\nYou must adapt your tone for each platform:\n- Instagram: Visual, engaging, lifestyle-oriented.\n- Facebook: Informative, problem-solving, value-driven.\n- TikTok: High-energy, conversational, trend-conscious.\n\nYou MUST respond ONLY with a valid JSON object using the exact structure below. Do not include markdown formatting like ```json or any other text outside the JSON.\n\n{\n  "instagram": {\n    "caption": "[Engaging caption with emojis]",\n    "hashtags": ["#tag1", "#tag2", "#tag3", "#tag4", "#tag5"]\n  },\n  "facebook": {\n    "ad_copy": "[Persuasive copy explaining the problem and solution]",\n    "cta": "[Strong, capitalized Call to Action]"\n  },\n  "tiktok": {\n    "hook": "[A 1-sentence attention-grabbing conversational hook]"\n  }\n}\n\nBusiness Name: {business_name}\nProduct/Service: {product_service}\nGenerate the ads.',
+  ig: 'You are a Luxury Brand Instagram Copywriter. Write an engaging ad caption using the AIDA (Attention, Interest, Desire, Action) framework based on the user\'s business and product.\n\nConstraints:\n1. Start with a compelling one-liner statement.\n2. Use emojis strategically as clean bullet points to list 3 key benefits.\n3. End with a soft, inviting call to action.\n4. Provide exactly 5 hashtags: 2 broad industry tags, 2 specific product tags, and 1 community/lifestyle tag.\n\nFormat your response strictly as a JSON object:\n{\n  "caption": "[Your generated AIDA caption]",\n  "hashtags": ["#tag1", "#tag2", "#tag3", "#tag4", "#tag5"]\n}',
+  fb: 'You are a Senior Direct-Response Facebook Marketer. Write a highly persuasive 3-paragraph ad copy using the PAS (Problem, Agitate, Solve) framework based on the user\'s business.\n\nConstraints:\n1. Paragraph 1 (Problem): Identify a core, frustrating problem the target audience faces.\n2. Paragraph 2 (Agitate): Amplify that pain point emotionally.\n3. Paragraph 3 (Solve): Introduce the business/product as the ultimate relief.\n4. Provide a standalone, capitalized, high-conversion Call to Action (CTA) starting with an emoji.\n\nFormat your response strictly as a JSON object:\n{\n  "ad_copy": "[Your 3-paragraph PAS copy]",\n  "cta": "[YOUR CAPITALIZED CTA HERE]"\n}',
+  tt: 'You are a Gen-Z TikTok Viral Content Creator. Your task is to write exactly ONE short, punchy, disruptive video hook sentence based on the user\'s business.\n\nConstraints:\n1. Zero corporate fluff or formal marketing language.\n2. It must sound like organic User-Generated Content (UGC).\n3. Use a psychological angle: Curiosity ("The secret..."), Negative Bias ("Stop doing..."), or Relatability ("I was today years old...").\n\nFormat your response strictly as a JSON object:\n{\n  "hook": "[Your single-sentence TikTok hook]"\n}'
+};
 const STRICT_OUTPUT_RULES = `
 Critical output contract:
 - Return only one valid JSON object. No markdown, commentary, or code fences.
@@ -276,9 +286,9 @@ app.post('/api/generate', async (req, res) => {
       if ((mode || '').toString().toLowerCase() === 'agency') {
         // Parallel OpenRouter calls for each agent (each returns {raw, parsed, error})
         const [igRes, fbRes, ttRes] = await Promise.all([
-          generateWithOpenRouter(process.env.PROMPT_IG || '', b, p),
-          generateWithOpenRouter(process.env.PROMPT_FB || '', b, p),
-          generateWithOpenRouter(process.env.PROMPT_TT || '', b, p)
+          generateWithOpenRouter(process.env.PROMPT_IG || DEFAULT_PROMPTS.ig, b, p),
+          generateWithOpenRouter(process.env.PROMPT_FB || DEFAULT_PROMPTS.fb, b, p),
+          generateWithOpenRouter(process.env.PROMPT_TT || DEFAULT_PROMPTS.tt, b, p)
         ]);
 
         // If any agent failed, return an error.
@@ -300,7 +310,7 @@ app.post('/api/generate', async (req, res) => {
       }
 
       // Express mode
-      const resObj = await generateWithOpenRouter(process.env.PROMPT_EXPRESS || '', b, p);
+      const resObj = await generateWithOpenRouter(process.env.PROMPT_EXPRESS || DEFAULT_PROMPTS.express, b, p);
       if (resObj.error || !resObj.parsed) {
         console.error(`[req ${reqId}] Express generation failed:`, resObj.raw);
         return res.status(502).json({ status: 'error', message: 'AI provider error. Check server logs.' });

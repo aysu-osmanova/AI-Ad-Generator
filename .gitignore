@@ -1,0 +1,14 @@
+# OS
+.DS_Store
+
+# Logs
+*.log
+
+# Node
+node_modules/
+
+# Secrets
+.env
+
+# Accidentally-committed npm cache
+ai-ad-generator/.npm-cache/
